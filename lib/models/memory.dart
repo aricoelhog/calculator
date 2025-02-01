@@ -7,12 +7,11 @@ class Memory {
   static const operations = const ['%', '/', 'x', '-', '+'];
 
   String _value = '0';
-  final _buffer = [0.0, 0.0];
-  int _bufferIndex = 0;
+  double _result = 0;
   bool _wipeValue = false;
 
   void applyCommand(String command) {
-    if (command == 'AC') {
+    if (command == 'C') {
       _allClear();
     } else if (equal.contains(command)) {
       _equals();
@@ -21,16 +20,37 @@ class Memory {
     }
   }
 
+  _equals() {
+    // Conta a quantidade de parênteses de abertura '(' e fechamento ')' na expressão
+    int openParentheses = _value.split('(').length - 1;
+    int closeParentheses = _value.split(')').length - 1;
+
+    // Se houver mais parênteses de abertura do que fechamento, adiciona os que faltam no final
+    while (closeParentheses < openParentheses) {
+      _value += ')';
+      closeParentheses++;
+    }
+
+    // Calcula o resultado da expressão e armazena no buffer
+    _result = calculate(_value);
+
+    // Converte o resultado para string, substituindo ponto por vírgula
+    _value = replaceDotWithComma(_result.toString());
+
+    // Remove ',0' do final da string para evitar valores como "10,0"
+    _value = _value.endsWith(',0') ? _value.split(',')[0] : _value;
+
+    // Define a flag para limpar o valor na próxima entrada
+    _wipeValue = true;
+  }
+
+  String replaceDotWithComma(String input) {
+    return input.replaceAll('.', ',');
+  }
+
   double calculate(String expression) {
-    expression = treatment(expression);
-
-    // if (!_isValidExpression(expression)) {
-    //   print('Expressão inválida: $expression');
-    //   return 0;
-    // }
-
     try {
-      print(expression);
+      expression = treatment(expression);
       final parser = Expression.parse(expression);
 
       final evaluator = const ExpressionEvaluator();
@@ -84,63 +104,97 @@ class Memory {
     return expression;
   }
 
-  // bool _isValidExpression(String expression) {
-  //   final validCharacters = RegExp(
-  //       r'^/^[0-9]+([+\-*\/%]([0-9]+|\([0-9]+\s*\*\s*[0-9]+\)\s*\/\s*100))?$');
-  //   if (!validCharacters.hasMatch(expression)) return false;
-
-  //   final endsWithOperator = RegExp(r'[+\-*/%]$');
-  //   if (endsWithOperator.hasMatch(expression)) return false;
-
-  //   return true;
-  // }
-
-  String replaceDotWithComma(String input) {
-    return input.replaceAll('.', ',');
-  }
-
-  _equals() {
-    _buffer[_bufferIndex] = calculate(_value);
-    print(replaceDotWithComma(_buffer[_bufferIndex].toString()));
-    _value = replaceDotWithComma(_buffer[_bufferIndex].toString());
-    _value = _value.endsWith(',0') ? _value.split(',')[0] : _value;
-    _wipeValue = true;
-  }
-
   _addDigit(String digit) {
-    final isDot = digit == ',';
+    try {
+      final isDot =
+          digit == ','; // Verifica se o dígito inserido é uma vírgula.
 
-    if (isDot) {
-      if (operations.contains(_value.characters.last)) {
-        _value += '0';
+      // Se o botão pressionado for vírgula
+      if (isDot) {
+        // Se o último caractere for uma operação, adiciona um zero antes da vírgula. Exemplo: "6+" → "6+0,"
+        if (operations.contains(_value.characters.last)) {
+          _value += '0';
+        }
+
+        // _value é dividido em partes usando operadores matemáticos (+, -, x, /, %) como delimitadores.
+        final parts = _value.split(RegExp(r'[+\-x/%]'));
+        // Obtém o último número digitado.
+        final lastNumber = parts.isNotEmpty ? parts.last : '';
+        // Se o último número já contém uma vírgula, impede a adição de outra.
+        if (lastNumber.contains(',')) {
+          return;
+        }
       }
 
-      final parts = _value.split(RegExp(r'[+\-x/%]'));
+      // Se _value for '0' e não for um ponto decimal, ou _wipeValue for verdadeiro, a variável wipeValue será verdadeira.
+      final wipeValue = (_value == '0' && !isDot) || _wipeValue;
+      // Se wipeValue for verdadeiro, currentValue será vazio, caso contrário, será igual a _value.
+      final currentValue = wipeValue ? '' : _value;
 
-      final lastNumber = parts.isNotEmpty ? parts.last : '';
-
-      if (lastNumber.contains(',')) {
-        return;
+      // Se o último caractere e o dígito inserido forem operadores, substitui o último operador pelo novo.
+      if (operations.contains(_value.characters.last) &&
+          operations.contains(digit)) {
+        _value = currentValue.substring(0, currentValue.length - 1) + digit;
       }
-    }
 
-    final wipeValue = (_value == '0' && !isDot) || _wipeValue;
-    final currentValue = wipeValue ? '' : _value;
+      // Se o dígito inserido for "( )", controla a adição de parênteses na expressão.
+      else if (digit == '( )') {
+        // Conta quantos parênteses de abertura '(' e fechamento ')' existem na expressão
+        int openParentheses = _value.split('(').length - 1;
+        int closeParentheses = _value.split(')').length - 1;
 
-    print(_value.characters.last);
-    if (operations.contains(_value.characters.last) &&
-        operations.contains(digit)) {
-      print('Operation');
-      _value = currentValue.substring(0, currentValue.length - 1) + digit;
-    } else {
-      _value = currentValue + digit;
+        // Se _value for "0", substitui por "(" ao invés de apenas concatenar
+        if (_value == '0') {
+          _value = '(';
+        }
+        // Se o último caractere for um número ou ')', adiciona um parêntese de fechamento ')'
+        else if (RegExp(r'\d$').hasMatch(_value) ||
+            _value.characters.last == ')') {
+          if (openParentheses > closeParentheses) {
+            _value = _value + ')';
+          }
+        }
+        // Se o último caractere for um operador ou a string estiver vazia, adiciona um '('
+        else {
+          _value = _value + '(';
+        }
+      }
+
+      // Se o dígito inserido for '<-', remove o último caractere.
+      else if (digit == '<-') {
+        // Se houver apenas um caractere, redefine _value para '0'.
+        if (_value.length == 1) {
+          _value = '0';
+        }
+        // Caso contrário, remove o último caractere da string.
+        else {
+          _value = currentValue.characters.skipLast(1).toString();
+        }
+      }
+      // Para qualquer outro dígito, apenas o adiciona à string.
+      else {
+        _value = currentValue + digit;
+      }
+
+      // Após qualquer alteração, reseta _wipeValue para falso.
+      _wipeValue = false;
+    } catch (e) {
+      // Em caso de erro, exibe uma notificação de erro na tela.
+      Fluttertoast.showToast(
+        msg: "Ocorreu um erro ao digitar: Erro: $e",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.black,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+      return 0;
     }
-    _wipeValue = false;
   }
 
   _allClear() {
     _value = '0';
-    _buffer.setAll(0, [0.0, 0.0]);
+    _result = 0;
     _wipeValue = false;
   }
 

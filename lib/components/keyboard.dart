@@ -13,7 +13,13 @@ class Keyboard extends StatelessWidget {
       child: Column(
         children: <Widget>[
           ButtonRow([
-            Button.big(text: 'AC', color: Button.DARK, cb: cb),
+            Button.big(text: '', color: Color.fromRGBO(48, 48, 48, 1), cb: cb),
+            Button.backspace(
+                text: '<-', color: Color.fromRGBO(0, 0, 0, 1), cb: cb),
+          ]),
+          ButtonRow([
+            Button(text: 'C', color: Button.DARK, cb: cb),
+            Button(text: '( )', color: Button.DARK, cb: cb),
             Button(text: '%', color: Button.DARK, cb: cb),
             Button.operation(text: '/', cb: cb),
           ]),

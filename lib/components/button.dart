@@ -8,12 +8,14 @@ class Button extends StatelessWidget {
   final String text;
   final bool big;
   final Color color;
+  final isBackspace;
   final void Function(String) cb;
 
   const Button({
     required this.text,
     this.big = false,
     this.color = DEFAULT,
+    this.isBackspace = false,
     required this.cb,
   });
 
@@ -21,6 +23,7 @@ class Button extends StatelessWidget {
     required this.text,
     this.big = true,
     this.color = DEFAULT,
+    this.isBackspace = false,
     required this.cb,
   });
 
@@ -28,6 +31,15 @@ class Button extends StatelessWidget {
     required this.text,
     this.big = false,
     this.color = OPERATION,
+    this.isBackspace = false,
+    required this.cb,
+  });
+
+  const Button.backspace({
+    required this.text,
+    this.big = false,
+    this.color = OPERATION,
+    this.isBackspace = true,
     required this.cb,
   });
 
@@ -37,14 +49,22 @@ class Button extends StatelessWidget {
       flex: big ? 2 : 1,
       child: ElevatedButton(
         onPressed: () => cb(text),
-        child: Text(
-          text,
-          style: TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
-        ),
+        child: this.isBackspace
+            ? Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.backspace),
+                  SizedBox(width: 8),
+                ],
+              )
+            : Text(
+                text,
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
           shape: RoundedRectangleBorder(

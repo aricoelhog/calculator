@@ -83,17 +83,9 @@ class Memory {
       RegExp(r'(\d+(\.\d+)?)%'),
       (match) {
         final number = match[1];
-        final leftValue = _getLeftValue(expression, match.start);
-        return '($leftValue * $number) / 100';
+        return '( $number / 100 )';
       },
     );
-  }
-
-  String _getLeftValue(String expression, int percentPosition) {
-    final leftExpression = expression.substring(0, percentPosition).trim();
-    final regex = RegExp(r'(\d+(\.\d+)?)');
-    final match = regex.firstMatch(leftExpression);
-    return match?.group(1) ?? '0';
   }
 
   String _adjustExpression(String expression) {
@@ -131,9 +123,21 @@ class Memory {
       // Se wipeValue for verdadeiro, currentValue será vazio, caso contrário, será igual a _value.
       final currentValue = wipeValue ? '' : _value;
 
-      // Se o último caractere e o dígito inserido forem operadores, substitui o último operador pelo novo.
-      if (operations.contains(_value.characters.last) &&
-          operations.contains(digit)) {
+      if (_wipeValue && operations.contains(digit) && digit != '-') {
+        return;
+      }
+      // Se estiver somente digitado 0, impede que a expressão inicie com um operador
+      else if ((_value == '0' && operations.contains(digit) && digit != '-') ||
+          (_value == '-' && operations.contains(digit))) {
+        _wipeValue = false;
+        return;
+      }
+
+      // Se o último caractere e o dígito inserido forem operadores, e o último caractere for diferente de %
+      // e igual ao dígito inserido, substitui o último operador pelo novo.
+      else if (operations.contains(_value.characters.last) &&
+          operations.contains(digit) &&
+          !(_value.characters.last == '%' && _value.characters.last != digit)) {
         _value = currentValue.substring(0, currentValue.length - 1) + digit;
       }
 
@@ -171,6 +175,7 @@ class Memory {
           _value = currentValue.characters.skipLast(1).toString();
         }
       }
+
       // Para qualquer outro dígito, apenas o adiciona à string.
       else {
         _value = currentValue + digit;

@@ -123,7 +123,10 @@ class Memory {
       // Se wipeValue for verdadeiro, currentValue será vazio, caso contrário, será igual a _value.
       final currentValue = wipeValue ? '' : _value;
 
-      if (_wipeValue && operations.contains(digit) && digit != '-') {
+      // Após exibir o resultado, se for selecionado uma tecla de operação concatena com o valor encontrado
+      if (_wipeValue && operations.contains(digit)) {
+        _value += digit;
+        _wipeValue = false;
         return;
       }
       // Se estiver somente digitado 0, impede que a expressão inicie com um operador

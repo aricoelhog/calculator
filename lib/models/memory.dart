@@ -1,8 +1,14 @@
+import 'package:calculator/data/datasource.dart';
+import 'package:calculator/data/domain/entities/memory_entity.dart';
+import 'package:calculator/models/mobx_store/memory_store.dart';
 import 'package:flutter/material.dart';
 import 'package:expressions/expressions.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get_it/get_it.dart';
 
 class Memory {
+  final _memoryStore = GetIt.I.get<MemoryStore>();
+
   static const equal = const ['='];
   static const operations = const ['%', '/', 'x', '-', '+'];
 
@@ -33,6 +39,11 @@ class Memory {
 
     // Calcula o resultado da expressão e armazena no buffer
     _result = calculate(_value);
+
+    // Database
+    _memoryStore.updateExpression(expression: _value);
+    _memoryStore.updateResult(result: _result);
+    _insertData();
 
     // Converte o resultado para string, substituindo ponto por vírgula
     _value = replaceDotWithComma(_result.toString());
@@ -198,6 +209,15 @@ class Memory {
       );
       return 0;
     }
+  }
+
+  _insertData() async {
+    await DataSource().insert(
+      MemoryEntity(
+        expression: _memoryStore.expression,
+        result: _memoryStore.result,
+      ),
+    );
   }
 
   _allClear() {

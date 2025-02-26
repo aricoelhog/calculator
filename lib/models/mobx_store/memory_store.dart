@@ -1,5 +1,6 @@
 import 'package:mobx/mobx.dart';
 
+// flutter packages pub run build_runner build -> Ao baixar o repositório
 // flutter packages pub run build_runner watch -> Executar no terminal
 part 'memory_store.g.dart';
 

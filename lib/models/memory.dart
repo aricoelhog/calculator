@@ -167,7 +167,8 @@ class Memory {
         }
         // Se o último caractere for um número ou ')', adiciona um parêntese de fechamento ')'
         else if (RegExp(r'\d$').hasMatch(_value) ||
-            _value.characters.last == ')') {
+            _value.characters.last == ')' ||
+            _value.characters.last == '%') {
           if (openParentheses > closeParentheses) {
             _value = _value + ')';
           }
@@ -186,7 +187,8 @@ class Memory {
         }
         // Caso contrário, remove o último caractere da string.
         else {
-          _value = currentValue.characters.skipLast(1).toString();
+          var vlr = currentValue == '' ? _value : currentValue;
+          _value = vlr.characters.skipLast(1).toString();
         }
       }
 

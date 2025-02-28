@@ -13,21 +13,10 @@ class _CalculatorState extends State<Calculator> {
   final Memory memory = Memory();
 
   _onPressed(String command) {
-    if (command == 'hist') {
-      openHistory();
-      return;
-    }
     setState(() {
       memory.applyCommand(command);
     });
   }
-
-  Future openHistory() => showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Testeee'),
-        ),
-      );
 
   // const Calculator({Key? key}) : super(key: key);
   @override

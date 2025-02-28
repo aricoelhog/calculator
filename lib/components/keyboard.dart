@@ -13,8 +13,6 @@ class Keyboard extends StatelessWidget {
       child: Column(
         children: <Widget>[
           ButtonRow([
-            Button.history(
-                text: 'hist', color: Color.fromRGBO(48, 48, 48, 1), cb: cb),
             Button.big(text: '', color: Color.fromRGBO(48, 48, 48, 1), cb: cb),
             Button.backspace(
                 text: '<-', color: Color.fromRGBO(0, 0, 0, 1), cb: cb),

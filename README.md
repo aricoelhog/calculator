@@ -21,7 +21,7 @@ Este projeto é uma calculadora simples desenvolvida em Flutter, inspirada na ca
 - Implementar um botão para visualizar o histórico de cálculos armazenados
 - Criar uma rotina de manutenção para limpeza dos dados antigos
 
-## 📸 Capturas de Tela
+## 📸 Demonstração
 
 ![Demonstração da Calculadora](assets/calculator.gif)
 

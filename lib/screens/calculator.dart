@@ -1,3 +1,4 @@
+import 'package:calculator/components/list_history.dart';
 import 'package:calculator/models/memory.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,20 +23,16 @@ class _CalculatorState extends State<Calculator> {
     });
   }
 
-  Future openHistory() => showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Testeee'),
-        ),
-      );
+  Future openHistory() => Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => ListHistory(),
+      ));
 
-  // const Calculator({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-    return MaterialApp(
-      home: Column(
+    return Scaffold(
+      body: Column(
         children: <Widget>[
           Display(memory.value),
           Keyboard(_onPressed),

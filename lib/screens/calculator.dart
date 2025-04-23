@@ -23,9 +23,12 @@ class _CalculatorState extends State<Calculator> {
     });
   }
 
-  Future openHistory() => Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => ListHistory(),
-      ));
+  Future openHistory() => showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (context) => const ListHistory(),
+      );
 
   @override
   Widget build(BuildContext context) {

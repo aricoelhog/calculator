@@ -10,7 +10,6 @@ class Button extends StatelessWidget {
   final bool big;
   final Color color;
   final isBackspace;
-  final isHistory;
   final void Function(String) cb;
 
   const Button({
@@ -18,7 +17,6 @@ class Button extends StatelessWidget {
     this.big = false,
     this.color = DEFAULT,
     this.isBackspace = false,
-    this.isHistory = false,
     required this.cb,
   });
 
@@ -27,7 +25,6 @@ class Button extends StatelessWidget {
     this.big = true,
     this.color = DEFAULT,
     this.isBackspace = false,
-    this.isHistory = false,
     required this.cb,
   });
 
@@ -36,7 +33,6 @@ class Button extends StatelessWidget {
     this.big = false,
     this.color = OPERATION,
     this.isBackspace = false,
-    this.isHistory = false,
     required this.cb,
   });
 
@@ -45,16 +41,6 @@ class Button extends StatelessWidget {
     this.big = false,
     this.color = OPERATION,
     this.isBackspace = true,
-    this.isHistory = false,
-    required this.cb,
-  });
-
-  const Button.history({
-    required this.text,
-    this.big = false,
-    this.color = OPERATION,
-    this.isBackspace = false,
-    this.isHistory = true,
     required this.cb,
   });
 
@@ -64,11 +50,11 @@ class Button extends StatelessWidget {
       flex: big ? 2 : 1,
       child: ElevatedButton(
         onPressed: () => cb(text),
-        child: this.isBackspace || this.isHistory
+        child: this.isBackspace
             ? Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(this.isBackspace ? Icons.backspace : Icons.history),
+                  Icon(Icons.backspace),
                   SizedBox(width: 8),
                 ],
               )

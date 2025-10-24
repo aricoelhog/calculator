@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:calculator/data/data_objects.dart';
 import 'package:calculator/data/domain/entities/memory_entity.dart';
-import 'package:calculator/models/history_model.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path/path.dart';
@@ -28,7 +27,6 @@ class DataSource {
     try {
       final Database db = await _getDataBase();
       String generated_code = Uuid().v4();
-      print(DateTime.now().millisecondsSinceEpoch);
 
       memory.resultId = await db.rawInsert('''
         INSERT INTO $table_name ($column_code, $column_expression, $column_result, $column_date)

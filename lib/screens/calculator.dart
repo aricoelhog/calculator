@@ -14,10 +14,6 @@ class _CalculatorState extends State<Calculator> {
   final Memory memory = Memory();
 
   _onPressed(String command) {
-    if (command == 'hist') {
-      openHistory();
-      return;
-    }
     setState(() {
       memory.applyCommand(command);
     });

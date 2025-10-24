@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class Button extends StatelessWidget {
   static const DARK = Color.fromRGBO(82, 82, 82, 1);
+  static const GREY = Color.fromRGBO(48, 48, 48, 1);
   static const DEFAULT = Color.fromRGBO(224, 93, 174, 1);
   static const OPERATION = Color.fromRGBO(95, 1, 104, 1);
 

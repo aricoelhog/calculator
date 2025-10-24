@@ -165,7 +165,7 @@ class Memory {
         if (_value == '0') {
           _value = '(';
         }
-        // Se o último caractere for um número ou ')', adiciona um parêntese de fechamento ')'
+        // Se o último caractere for um número ou ')' ou '%', adiciona um parêntese de fechamento ')'
         else if (RegExp(r'\d$').hasMatch(_value) ||
             _value.characters.last == ')' ||
             _value.characters.last == '%') {

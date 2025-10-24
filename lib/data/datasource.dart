@@ -79,4 +79,32 @@ class DataSource {
       print('Erro ao copiar o arquivo: $e');
     }
   }
+
+  Future<List<HistoryModel>> getAll() async {
+    try {
+      final Database db = await _getDataBase();
+      final yesterday =
+          // ignore: prefer_const_constructors
+          DateTime.now().subtract(Duration(days: 1)).millisecondsSinceEpoch;
+
+      print('Yesterday: $yesterday');
+
+      final List<Map<String, dynamic>> historyMap = await db.query(table_name,
+          orderBy: '$column_date DESC', where: '$column_date >= $yesterday');
+
+      return List.generate(historyMap.length, (index) {
+        return HistoryModel.fromMap(historyMap[index]);
+      });
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: "Erro ao buscar dados. Erro: $e",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.black,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+      return List.empty();
+    }
+  }
 }

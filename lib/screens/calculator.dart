@@ -1,3 +1,4 @@
+import 'package:calculator/components/list_history.dart';
 import 'package:calculator/models/memory.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,13 +19,19 @@ class _CalculatorState extends State<Calculator> {
     });
   }
 
-  // const Calculator({Key? key}) : super(key: key);
+  Future openHistory() => showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (context) => const ListHistory(),
+      );
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-    return MaterialApp(
-      home: Column(
+    return Scaffold(
+      body: Column(
         children: <Widget>[
           Display(memory.value),
           Keyboard(_onPressed),

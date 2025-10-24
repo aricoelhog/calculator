@@ -89,6 +89,8 @@ class DataSource {
           // ignore: prefer_const_constructors
           DateTime.now().subtract(Duration(days: 1)).millisecondsSinceEpoch;
 
+      print('Yesterday: $yesterday');
+
       final List<Map<String, dynamic>> historyMap = await db.query(table_name,
           orderBy: '$column_date DESC', where: '$column_date >= $yesterday');
 
@@ -97,7 +99,7 @@ class DataSource {
       });
     } catch (e) {
       Fluttertoast.showToast(
-        msg: "Erro ao inserir dado. Erro: $e",
+        msg: "Erro ao buscar dados. Erro: $e",
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.BOTTOM,
         backgroundColor: Colors.black,
